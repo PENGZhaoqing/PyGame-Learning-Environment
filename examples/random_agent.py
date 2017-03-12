@@ -1,6 +1,6 @@
 import numpy as np
 from ple import PLE
-from ple.games.raycastmaze import RaycastMaze
+from ple.games.pong import Pong
 
 
 class NaiveAgent():
@@ -14,10 +14,6 @@ class NaiveAgent():
     def pickAction(self, reward, obs):
         return self.actions[np.random.randint(0, len(self.actions))]
 
-###################################
-game = RaycastMaze(
-    map_size=6
-)  # create our game
 
 fps = 30  # fps we want to run at
 frame_skip = 2
@@ -30,7 +26,7 @@ max_noops = 20
 nb_frames = 15000
 
 # make a PLE instance.
-p = PLE(game, fps=fps, frame_skip=frame_skip, num_steps=num_steps,
+p = PLE(Pong(), fps=fps, frame_skip=frame_skip, num_steps=num_steps,
         force_fps=force_fps, display_screen=display_screen)
 
 # our Naive agent!
@@ -54,4 +50,4 @@ for f in range(nb_frames):
     reward = p.act(action)
 
     if f % 50 == 0:
-        p.saveScreen("screen_capture.png")
+        p.saveScreen("tmp/screen_capture.png")

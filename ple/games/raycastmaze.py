@@ -1,9 +1,9 @@
 
 #import .base
-from .base.pygamewrapper import PyGameWrapper
+from base.pygamewrapper import PyGameWrapper
 import pygame
 import numpy as np
-from .raycast import RayCastPlayer
+from raycast import RayCastPlayer
 from pygame.constants import K_w, K_a, K_d, K_s
 
 

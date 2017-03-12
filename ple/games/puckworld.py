@@ -3,12 +3,12 @@ import sys
 import math
 
 #import .base
-from .base.pygamewrapper import PyGameWrapper
+from base.pygamewrapper import PyGameWrapper
 
 from pygame.constants import K_w, K_a, K_s, K_d
-from .primitives import Player, Creep
-from .utils.vec2d import vec2d
-from .utils import percent_round_int
+from primitives import Player, Creep
+from utils.vec2d import vec2d
+from utils import percent_round_int
 
 
 class PuckCreep(pygame.sprite.Sprite):

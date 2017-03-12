@@ -2,11 +2,11 @@ import math
 import sys
 
 #import .base
-from .base.pygamewrapper import PyGameWrapper
+from base.pygamewrapper import PyGameWrapper
 
 import pygame
 from pygame.constants import K_w, K_s
-from .utils.vec2d import vec2d
+from utils.vec2d import vec2d
 
 
 class Block(pygame.sprite.Sprite):

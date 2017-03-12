@@ -3,7 +3,7 @@ from PIL import Image  # pillow
 
 import pygame
 #from ple.games import base
-#from .games.base.doomwrapper import DoomWrapper
+from .games.base.doomwrapper import DoomWrapper
 from .games.base.pygamewrapper import PyGameWrapper
 
 class PLE(object):
@@ -125,9 +125,9 @@ class PLE(object):
             pygame.display.set_mode((1, 1), pygame.NOFRAME)
         
         #vizdoom needs an int
-        #if defined?(DoomWrapper) and isinstance(self.game, DoomWrapper):
-        #if isinstance(self.game, base.DoomWrapper):
-        #    self.rng = rng
+        # if defined?(DoomWrapper) and isinstance(self.game, DoomWrapper):
+        if isinstance(self.game, DoomWrapper):
+           self.rng = rng
         
         self.game.setRNG(self.rng)
         self.init()
@@ -182,7 +182,7 @@ class PLE(object):
         """
         actions = self.game.actions
         
-        if isinstance(actions, dict) or isinstance(actions, dict_values):
+        if isinstance(actions, dict):
             actions = actions.values()
         actions = list(actions) #.values()
         #print (actions)

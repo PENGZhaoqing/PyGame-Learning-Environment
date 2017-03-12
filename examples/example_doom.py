@@ -1,6 +1,6 @@
 import numpy as np
 from ple import PLE
-from ple.games import Doom
+from ple.games.doom import Doom
 
 class NaiveAgent():
 	"""
