@@ -26,28 +26,34 @@ max_noops = 20
 nb_frames = 15000
 
 # make a PLE instance.
-p = PLE(Pong(), fps=fps, frame_skip=frame_skip, num_steps=num_steps,
+env = PLE(Pong(), fps=fps, frame_skip=frame_skip, num_steps=num_steps,
         force_fps=force_fps, display_screen=display_screen)
 
 # our Naive agent!
-agent = NaiveAgent(p.getActionSet())
+agent = NaiveAgent(env.getActionSet())
 
 # init agent and game.
-p.init()
+env.init()
 
 # lets do a random number of NOOP's
 for i in range(np.random.randint(0, max_noops)):
-    reward = p.act(p.NOOP)
+    reward = env.act(env.NOOP)
 
 # start our training loop
 for f in range(nb_frames):
     # if the game is over
-    if p.game_over():
-        p.reset_game()
+    if env.game_over():
+        env.reset_game()
 
-    obs = p.getScreenRGB()
+    obs = env.getScreenRGB()
     action = agent.pickAction(reward, obs)
-    reward = p.act(action)
+    reward = env.act(action)
 
-    if f % 50 == 0:
-        p.saveScreen("tmp/screen_capture.png")
+    # if f % 50 == 0:
+    #     p.saveScreen("tmp/screen_capture.png")
+
+    print f
+
+    if f > 50:
+        env.display_screen = True
+        env.force_fps = True
