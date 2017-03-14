@@ -177,7 +177,7 @@ class WaterWorld(PyGameWrapper):
             )
 
         else:
-            self.player.pos = vec2d(self.AGENT_INIT_POS)
+            self.player.pos = vec2d(self.AGdENT_INIT_POS)
             self.player.vel = vec2d((0.0, 0.0))
 
         if self.creeps is None:
@@ -204,7 +204,7 @@ class WaterWorld(PyGameWrapper):
         self._handle_player_events()
         self.player.update(self.dx, self.dy, dt)
 
-        hits = pygame.sprite.spritecollide(self.player, self.creeps, True)
+        hits = pygame.sprite.spritecollide(self.player, self.creeps, True, pygame.sprite.collide_circle)
         for creep in hits:
             self.creep_counts[creep.TYPE] -= 1
             self.score += creep.reward
