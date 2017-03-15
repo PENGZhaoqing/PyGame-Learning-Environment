@@ -177,7 +177,7 @@ class WaterWorld(PyGameWrapper):
             )
 
         else:
-            self.player.pos = vec2d(self.AGdENT_INIT_POS)
+            self.player.pos = vec2d(self.AGENT_INIT_POS)
             self.player.vel = vec2d((0.0, 0.0))
 
         if self.creeps is None:

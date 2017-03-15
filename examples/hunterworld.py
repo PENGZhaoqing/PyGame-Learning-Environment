@@ -1,13 +1,11 @@
 import sys
 # import .base
-from base.pygamewrapper import PyGameWrapper
 
-from utils import percent_round_int
-from pygame.constants import K_w, K_a, K_s, K_d
+from ple.games.utils import percent_round_int
 
 import pygame
 import math
-from utils.vec2d import vec2d
+from ple.games.utils.vec2d import vec2d
 from random import random
 
 
@@ -45,6 +43,29 @@ class Prey(pygame.sprite.Sprite):
     def set_pos(self, pos_init):
         self.pos = vec2d(pos_init)
         self.rect.center = pos_init
+
+    def _handle_hunter_events(self):
+        self.dx = 0
+        self.dy = 0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                key = event.key
+
+                if key == self.actions["left"]:
+                    self.dx -= self.HUNTER_SPEED
+
+                if key == self.actions["right"]:
+                    self.dx += self.HUNTER_SPEED
+
+                if key == self.actions["up"]:
+                    self.dy -= self.HUNTER_SPEED
+
+                if key == self.actions["down"]:
+                    self.dy += self.HUNTER_SPEED
 
     def update(self, dx, dy):
 
@@ -128,23 +149,7 @@ class Hunter(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect.center)
 
 
-class HunterWorld(PyGameWrapper):
-    """
-    Based Karpthy's WaterWorld in `REINFORCEjs`_.
-
-    .. _REINFORCEjs: https://github.com/karpathy/reinforcejs
-
-    Parameters
-    ----------
-    width : int
-        Screen width.
-
-    height : int
-        Screen height, recommended to be same dimension as width.
-
-    num_creeps : int (default: 3)
-        The number of creeps on the screen at once.
-    """
+class HunterWorld():
 
     def __init__(self,
                  width=48,
@@ -152,55 +157,46 @@ class HunterWorld(PyGameWrapper):
                  num_preys=1,
                  num_hunters=1):
 
-        actions = {
-            "up": K_w,
-            "left": K_a,
-            "right": K_d,
-            "down": K_s
-        }
 
-        PyGameWrapper.__init__(self, width, height, actions=actions)
         self.BG_COLOR = (255, 255, 255)
         self.PREY_NUM = num_preys
         self.HUNTER_NUM = num_hunters
 
         radius = percent_round_int(width, 0.047)
 
-
         self.HUNTER_COLOR = (60, 60, 140)
         self.HUNTER_SPEED = 0.25 * width
         self.HUNTER_RADIUS = radius
 
-        self.PREY_COLORS = (40, 140, 40)
+        self.PREY_COLOR = (40, 140, 40)
         self.PREY_SPEED = 0.25 * width
         self.PREY_RADIUS = radius
 
-
         self.hunters = []
         self.preys = []
+        self.agents = pygame.sprite.Group()
 
-    def _handle_player_events(self):
-        self.dx = 0
-        self.dy = 0
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+        for i in range(self.HUNTER_NUM):
+            hunter = Hunter(
+                self.HUNTER_RADIUS,
+                self.HUNTER_COLOR,
+                self.HUNTER_SPEED,
+                self.width,
+                self.height
+            )
+            self.hunters.append(hunter)
+            self.agents.add(hunter)
 
-            if event.type == pygame.KEYDOWN:
-                key = event.key
-
-                if key == self.actions["left"]:
-                    self.dx -= self.AGENT_SPEED
-
-                if key == self.actions["right"]:
-                    self.dx += self.AGENT_SPEED
-
-                if key == self.actions["up"]:
-                    self.dy -= self.AGENT_SPEED
-
-                if key == self.actions["down"]:
-                    self.dy += self.AGENT_SPEED
+        for i in range(self.PREY_NUM):
+            prey = Prey(
+                self.PREY_RADIUS,
+                self.PREY_COLOR,
+                self.PREY_SPEED,
+                self.width,
+                self.height
+            )
+            self.preys.append(prey)
+            self.agents.add(prey)
 
     def getGameState(self):
         """
@@ -240,7 +236,7 @@ class HunterWorld(PyGameWrapper):
         for agent in agents:
             pos_x = random.uniform(agent.radius, self.width - agent.radius)
             pos_y = random.uniform(agent.radius, self.height - agent.radius)
-            pos.append(vec2d(pos_x, pos_y))
+            pos.append(vec2d((pos_x, pos_y)))
 
         for i in range(len(agents)):
             for j in range(i + 1, len(agents)):
@@ -258,7 +254,7 @@ class HunterWorld(PyGameWrapper):
         """
             Return bool if the game has 'finished'
         """
-        return (self.creep_counts['GOOD'] == 0)
+        return len(self.preys) == 0
 
     def init(self):
 
@@ -266,57 +262,12 @@ class HunterWorld(PyGameWrapper):
             Starts/Resets the game to its inital state
         """
 
-        for i in range(self.HUNTER_NUM):
-            hunter = Hunter(
-                self.HUNTER_RADIUS,
-                self.HUNTER_COLOR,
-                self.HUNTER_SPEED,
-                self.width,
-                self.height
-            )
-            self.hunters.append(hunter)
+        pos = self._rand_start(self.agents)
 
-        for i in range(self.PREY_NUM):
-            prey = Prey(
-                self.PREY_RADIUS,
-                self.PREY_COLOR,
-                self.PREY_SPEED,
-                self.width,
-                self.height
-            )
-            self.hunters.append(hunter)
-
-
-        if len(self.hunters) == 0:
-
-        else:
-            self.player.pos = vec2d(self.HUNTER_INIT_POS)
-
-        if self.creeps is None:
-            self.creeps = pygame.sprite.Group()
-        else:
-            self.creeps.empty()
-
-        for i in range(self.N_CREEPS):
-            self._add_creep()
-
-        creep = Creep(
-            self.CREEP_COLORS[creep_type],
-            self.CREEP_RADII[creep_type],
-            pos,
-            self.rng.choice([-1, 1], 2),
-            self.rng.rand() * self.CREEP_SPEED,
-            self.CREEP_REWARD[creep_type],
-            self.CREEP_TYPES[creep_type],
-            self.width,
-            self.height,
-            self.rng.rand()
-        )
-
-        self.creeps.add(creep)
+        for i in range(len(self.agents)):
+            self.agents[i].set_pos(pos[i])
 
         self.score = 0
-        self.ticks = 0
         self.lives = -1
 
     def step(self, dt):
@@ -328,8 +279,9 @@ class HunterWorld(PyGameWrapper):
 
         self.score += self.rewards["tick"]
 
-        self._handle_player_events()
-        self.player.update(self.dx, self.dy, dt)
+        for i in self.hunters:
+            self._handle_hunter_events()
+        self.update(self.dx, self.dy, dt)
 
         hits = pygame.sprite.spritecollide(self.player, self.creeps, True, pygame.sprite.collide_circle)
         for creep in hits:
