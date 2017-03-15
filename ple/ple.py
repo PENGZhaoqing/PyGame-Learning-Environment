@@ -2,9 +2,10 @@ import numpy as np
 from PIL import Image  # pillow
 
 import pygame
-#from ple.games import base
+# from ple.games import base
 from .games.base.doomwrapper import DoomWrapper
 from .games.base.pygamewrapper import PyGameWrapper
+
 
 class PLE(object):
     """
@@ -113,7 +114,6 @@ class PLE(object):
         if reward_values:
             self.game.adjustRewards(reward_values)
 
-
         if isinstance(self.game, PyGameWrapper):
             if isinstance(rng, np.random.RandomState):
                 self.rng = rng
@@ -123,12 +123,12 @@ class PLE(object):
             # some pygame games preload the images
             # to speed resetting and inits up.
             pygame.display.set_mode((1, 1), pygame.NOFRAME)
-        
-        #vizdoom needs an int
+
+        # vizdoom needs an int
         # if defined?(DoomWrapper) and isinstance(self.game, DoomWrapper):
         if isinstance(self.game, DoomWrapper):
-           self.rng = rng
-        
+            self.rng = rng
+
         self.game.setRNG(self.rng)
         self.init()
 
@@ -165,7 +165,7 @@ class PLE(object):
         This method should be explicitly called.
         """
         self.game._setup()
-        self.game.init() #this is the games setup/init
+        self.game.init()  # this is the games setup/init
 
     def getActionSet(self):
         """
@@ -181,12 +181,12 @@ class PLE(object):
 
         """
         actions = self.game.actions
-        
+
         if isinstance(actions, dict):
             actions = actions.values()
-        actions = list(actions) #.values()
-        #print (actions)
-        #assert isinstance(actions, list), "actions is not a list"
+        actions = list(actions)  # .values()
+        # print (actions)
+        # assert isinstance(actions, list), "actions is not a list"
 
         if self.add_noop_action:
             actions.append(self.NOOP)
@@ -286,7 +286,7 @@ class PLE(object):
         """
         frame = self.getScreenRGB()
         frame = 0.21 * frame[:, :, 0] + 0.72 * \
-            frame[:, :, 1] + 0.07 * frame[:, :, 2]
+                                        frame[:, :, 1] + 0.07 * frame[:, :, 2]
         frame = np.round(frame).astype(np.uint8)
 
         return frame
@@ -369,6 +369,9 @@ class PLE(object):
         """
         return sum(self._oneStepAct(action) for i in range(self.frame_skip))
 
+    def multi_act(self, multi_actions):
+        return sum(self._oneStepMultiAct(multi_actions) for i in range(self.frame_skip))
+
     def _draw_frame(self):
         """
         Decides if the screen will be drawn too
@@ -396,6 +399,17 @@ class PLE(object):
 
         return self._getReward()
 
+    def _oneStepMultiAct(self, multi_actions):
+
+        if self.game_over():
+            return 0.0
+
+        for index, action in enumerate(multi_actions):
+            if action not in self.getActionSet():
+                multi_actions[index] = self.NOOP
+
+        self._setAction(multi_actions)
+
     def _setAction(self, action):
         """
             Instructs the game to perform an action if its not a NOOP
@@ -405,6 +419,13 @@ class PLE(object):
             self.game._setAction(action, self.last_action)
 
         self.last_action = action
+
+    def _setMultiAction(self,multi_actions):
+
+        if multi_actions is not None:
+            self.game._setMultiActions(multi_actions, self.last_multiAction)
+
+        self.last_multiAction = multi_actions
 
     def _getReward(self):
         """

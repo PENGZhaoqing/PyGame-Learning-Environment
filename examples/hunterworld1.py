@@ -5,26 +5,27 @@ import random as rand
 import pygame
 import numpy as np
 
-size=16
+size = 16
+
 
 # Class for the orange dude
 class Agent(object):
-    def __init__(self,color):
+    def __init__(self, color):
 
-        height=len(map.layout)
-        width=len(map.layout[0])
+        height = len(map.layout)
+        width = len(map.layout[0])
 
-        self.rect = pygame.Rect(rand.randint(1,width-2)*size, rand.randint(1,height-2)*size, size, size)
+        self.rect = pygame.Rect(rand.randint(1, width - 2) * size, rand.randint(1, height - 2) * size, size, size)
         self.speed = 2
         self.color = color
 
     def move(self, dx, dy):
         if dx != 0:
-            self.move_single_axis(dx*self.speed, 0)
+            self.move_single_axis(dx * self.speed, 0)
         if dy != 0:
-            self.move_single_axis(0, dy*self.speed)
+            self.move_single_axis(0, dy * self.speed)
 
-    def draw(self,screen):
+    def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
     def move_single_axis(self, dx, dy):
@@ -48,10 +49,9 @@ class Agent(object):
 
 # Nice class to hold a wall rect
 class Map(object):
-
     def __init__(self, layout):
-        self.layout=layout
-        self.walls=[]
+        self.layout = layout
+        self.walls = []
         x = y = 0
         for row in layout:
             for col in row:
@@ -61,9 +61,10 @@ class Map(object):
             y += size
             x = 0
 
-    def draw(self,screen):
+    def draw(self, screen):
         for wall in self.walls:
             pygame.draw.rect(screen, (0, 0, 0), wall)
+
 
 # Holds the level layout in a list of strings.
 layout = [
@@ -84,11 +85,10 @@ layout = [
     "WWWWWWWWWWWWWWWWWWWW",
 ]
 
-map=Map(layout)
-agent1 = Agent((255,0,0))  # Create the player
-agent2 = Agent((255,0,0))  # Create the player
-prey = Agent((0,255,0))  # Create the player
-
+map = Map(layout)
+agent1 = Agent((255, 0, 0))  # Create the player
+agent2 = Agent((255, 0, 0))  # Create the player
+prey = Agent((0, 255, 0))  # Create the player
 
 # Initialise pygame
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -101,14 +101,14 @@ screen = pygame.display.set_mode((320, 240))
 clock = pygame.time.Clock()
 running = True
 
-episode=1
-max_episode=1000
-max_step=200
+episode = 1
+max_episode = 1000
+max_step = 200
 
-while running and episode<max_episode:
+while running and episode < max_episode:
 
-    step=1
-    while running and step<max_step:
+    step = 1
+    while running and step < max_step:
         clock.tick(60)
 
         for e in pygame.event.get():
@@ -143,8 +143,7 @@ while running and episode<max_episode:
 
         pygame.display.flip()
         # print "steps: " + str(step)
-        step=step+1
-
+        step = step + 1
 
     # print "episode: "+str(episode)
-    episode=episode+1
+    episode = episode + 1

@@ -34,6 +34,7 @@ class PyGameWrapper(object):
 
         # Required fields
         self.actions = actions  # holds actions
+        self.multi_actions = actions
 
         self.score = 0.0  # required.
         self.lives = 0  # required. Can be 0 or -1 if not required.
@@ -77,6 +78,21 @@ class PyGameWrapper(object):
 
         pygame.event.post(kd)
         pygame.event.post(ku)
+
+    def _setMultiActions(self, multi_actions, last_multiActions):
+
+        for index, action in enumerate(multi_actions):
+            if action is None:
+                multi_actions[index] = self.None
+
+        for index,action in enumerate(last_multiActions):
+            if action is None:
+                last_multiActions[index] = self.None
+
+        ku = pygame.event.Event(KEYUP, {"key": last_action})
+
+
+
 
     def _draw_frame(self, draw_screen):
         """
