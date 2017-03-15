@@ -193,6 +193,16 @@ class PLE(object):
 
         return actions
 
+    def getMultiActionSet(self):
+
+        actions = self.game.actions
+
+        if isinstance(actions, dict):
+            actions = actions.values()
+        actions = list(actions)  # .values()
+
+        return actions
+
     def getFrameNumber(self):
         """
         Gets the current number of frames the agent has seen
@@ -370,6 +380,7 @@ class PLE(object):
         return sum(self._oneStepAct(action) for i in range(self.frame_skip))
 
     def multi_act(self, multi_actions):
+
         return sum(self._oneStepMultiAct(multi_actions) for i in range(self.frame_skip))
 
     def _draw_frame(self):
@@ -408,7 +419,9 @@ class PLE(object):
             if action not in self.getActionSet():
                 multi_actions[index] = self.NOOP
 
-        self._setAction(multi_actions)
+        self._setMultiAction(multi_actions)
+        self.frame_count += self.num_steps
+        return self._getReward()
 
     def _setAction(self, action):
         """

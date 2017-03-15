@@ -1,15 +1,16 @@
 import sys
 # import .base
 
-from ple.games.utils import percent_round_int
+from ple.games.utils import *
 from pygame.constants import K_w, K_a, K_s, K_d, K_UP, K_DOWN, K_LEFT, K_RIGHT
 
 from base.pygamewrapper import PyGameWrapper
-from Agent import Hunter,Prey
+from agent import Hunter, Prey
 import pygame
 import math
 from ple.games.utils.vec2d import vec2d
-from random import random, uniform
+from random import uniform
+
 
 class HunterWorld(PyGameWrapper):
     def __init__(self,
@@ -200,8 +201,11 @@ class HunterWorld(PyGameWrapper):
         self._handle_player_events(self.hunters_list)
 
         for prey in self.preys:
-            hits = pygame.sprite.spritecollide(prey, self.hunters, False, pygame.sprite.collide_circle)
-            if len(hits) >= 2:
+            count = 0
+            for hunter in self.hunters:
+                if count_distant(prey, hunter) < (hunter.out_radius - prey.radius):
+                    count += 1
+            if count >= 2:
                 self.score += self.rewards["positive"]
                 self.preys.remove(prey)
                 self.agents.remove(prey)
@@ -228,5 +232,8 @@ if __name__ == "__main__":
 
     while True:
         dt = game.clock.tick_busy_loop(30)
+        if game.game_over():
+            game.init()
+            print game.getScore()
         game.step(dt)
         pygame.display.update()

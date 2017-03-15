@@ -79,19 +79,23 @@ class PyGameWrapper(object):
         pygame.event.post(kd)
         pygame.event.post(ku)
 
-    def _setMultiActions(self, multi_actions, last_multiActions):
+    def _setMultiActions(self, multi_actions, last_multi_actions):
 
         for index, action in enumerate(multi_actions):
             if action is None:
                 multi_actions[index] = self.None
 
-        for index,action in enumerate(last_multiActions):
+        for index, action in enumerate(last_multi_actions):
             if action is None:
-                last_multiActions[index] = self.None
+                last_multi_actions[index] = self.None
 
-        ku = pygame.event.Event(KEYUP, {"key": last_action})
+        for idx, action in enumerate(multi_actions):
+            kd = pygame.event.Event(KEYUP, {"key": action})
+            pygame.event.post(kd)
 
-
+        for idx, action in enumerate(last_multi_actions):
+            ku = pygame.event.Event(KEYUP, {"key": action})
+            pygame.event.post(ku)
 
 
     def _draw_frame(self, draw_screen):
