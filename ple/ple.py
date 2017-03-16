@@ -106,6 +106,7 @@ class PLE(object):
         self.add_noop_action = add_noop_action
 
         self.last_action = []
+        self.last_multiAction = []
         self.action = []
         self.previous_score = 0
         self.frame_count = 0
@@ -415,11 +416,13 @@ class PLE(object):
         if self.game_over():
             return 0.0
 
-        for index, action in enumerate(multi_actions):
-            if action not in self.getActionSet():
-                multi_actions[index] = self.NOOP
-
         self._setMultiAction(multi_actions)
+
+        for i in range(self.num_steps):
+            time_elapsed = self._tick()
+            self.game.step(time_elapsed)
+            self._draw_frame()
+
         self.frame_count += self.num_steps
         return self._getReward()
 
@@ -433,7 +436,7 @@ class PLE(object):
 
         self.last_action = action
 
-    def _setMultiAction(self,multi_actions):
+    def _setMultiAction(self, multi_actions):
 
         if multi_actions is not None:
             self.game._setMultiActions(multi_actions, self.last_multiAction)

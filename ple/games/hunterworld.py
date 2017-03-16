@@ -234,6 +234,7 @@ if __name__ == "__main__":
         dt = game.clock.tick_busy_loop(30)
         if game.game_over():
             game.init()
-            print game.getScore()
         game.step(dt)
         pygame.display.update()
+        if game.getScore() > 0:
+            print "Score: {:0.3f} ".format(game.getScore())

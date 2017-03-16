@@ -83,14 +83,14 @@ class PyGameWrapper(object):
 
         for index, action in enumerate(multi_actions):
             if action is None:
-                multi_actions[index] = self.None
+                multi_actions[index] = self.NOOP
 
         for index, action in enumerate(last_multi_actions):
             if action is None:
-                last_multi_actions[index] = self.None
+                last_multi_actions[index] = self.NOOP
 
         for idx, action in enumerate(multi_actions):
-            kd = pygame.event.Event(KEYUP, {"key": action})
+            kd = pygame.event.Event(KEYDOWN, {"key": action})
             pygame.event.post(kd)
 
         for idx, action in enumerate(last_multi_actions):
