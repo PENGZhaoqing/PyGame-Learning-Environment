@@ -12,7 +12,7 @@ rewards = {
 }
 
 game = HunterWorld(width=256, height=256,
-                   num_preys=1,
+                   num_preys=5,
                    num_hunters=2)
 env = PLE(game, fps=30, force_fps=False, display_screen=True,
           reward_values=rewards)
