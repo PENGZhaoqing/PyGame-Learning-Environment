@@ -107,8 +107,8 @@ class Hunter(Agent):
             image,
             (150, 95, 95),
             (self.out_radius, self.out_radius),
-            self.out_radius,
-            0
+             self.out_radius,
+            2
         )
         image.set_alpha(int(255 * 0.75))
 

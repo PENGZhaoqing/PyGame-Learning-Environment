@@ -47,15 +47,14 @@ class HunterWorld(PyGameWrapper):
         self.PREY_NUM = num_preys
         self.HUNTER_NUM = num_hunters
 
-        radius = percent_round_int(width, 0.047)
 
         self.HUNTER_COLOR = (60, 60, 140)
         self.HUNTER_SPEED = 0.25 * width
-        self.HUNTER_RADIUS = radius
+        self.HUNTER_RADIUS = percent_round_int(width, 0.07)
 
         self.PREY_COLOR = (40, 140, 40)
         self.PREY_SPEED = 0.25 * width
-        self.PREY_RADIUS = radius
+        self.PREY_RADIUS = percent_round_int(width, 0.047)
 
         self.hunters = pygame.sprite.Group()
         self.hunters_list = []

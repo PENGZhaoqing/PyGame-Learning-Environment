@@ -2,6 +2,7 @@ import random
 from ple import PLE
 from ple.games.hunterworld import HunterWorld
 import random
+import pylab as plt
 
 rewards = {
     "positive": 1.0,
@@ -30,7 +31,12 @@ for i in range(10000):
 
     reward = env.multi_act(action_list)
 
-    if i > 200:
+    # frame = env.getScreenGrayscale()
+    # frame = env.getScreenRGB()
+    # plt.imshow(frame, cmap='gray')
+    # plt.show()
+
+    if i > 1000:
         env.force_fps = True
         env.display_screen = True
 
